@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
+const emitter = require('../events/emitter');
 
 const signToken = (user) =>
   jwt.sign(
@@ -27,6 +28,7 @@ exports.login = async (req, res) => {
     if (!user || !(await bcrypt.compare(password, user.password)))
       return res.status(401).json({ error: 'Invalid credentials' });
     const token = signToken(user);
+    emitter.emit('userLoggedIn', { id: user._id });
     res.json({ token, user: { id: user._id, name: user.name, role: user.role } });
   } catch (err) {
     res.status(500).json({ error: err.message });

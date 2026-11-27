@@ -1,8 +1,10 @@
 const Note = require('../models/Note');
+const emitter = require('../events/emitter');
 
 exports.create = async (req, res) => {
   try {
     const note = await Note.create({ ...req.body, owner: req.user.id });
+    emitter.emit('noteCreated', { title: note.title });
     res.status(201).json(note);
   } catch (err) {
     res.status(400).json({ error: err.message });
