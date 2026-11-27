@@ -6,6 +6,8 @@ const connectDB = require('./config/db');
 const app = express();
 const server = http.createServer(app);
 
+require('./socket/chat')(server);
+
 app.use(express.json());
 
 connectDB();
